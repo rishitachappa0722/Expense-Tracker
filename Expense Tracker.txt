@@ -1,0 +1,95 @@
+import java.util.*;
+
+class Expense {
+    String category;
+    double amount;
+
+    Expense(String category, double amount) {
+        this.category = category;
+        this.amount = amount;
+    }
+
+    void display() {
+        System.out.printf("%s - $%.2f%n", category, amount);
+    }
+}
+
+class NegativeAmountException extends Exception {
+    NegativeAmountException(String msg) {
+        super(msg);
+    }
+}
+
+public class ExpenseTracker {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Expense> expenses = new ArrayList<>();
+        int choice = 0;
+
+        do {
+            System.out.println("\n--- Expense Tracker ---");
+            System.out.println("1. Add Expense");
+            System.out.println("2. View Expenses");
+            System.out.println("3. Total Expenses");
+            System.out.println("4. Exit");
+            System.out.print("Enter choice: ");
+
+            if (!sc.hasNextInt()) {
+                System.out.println("Invalid input! Please enter a number (1-4).");
+                sc.next();
+                continue;
+            }
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    sc.nextLine();
+                    System.out.print("Enter Category: ");
+                    String cat = sc.nextLine();
+                    System.out.print("Enter Amount: ");
+                    try {
+                        if (!sc.hasNextDouble()) {
+                            System.out.println("Invalid amount! Please enter a number.");
+                            sc.next();
+                            break;
+                        }
+                        double amt = sc.nextDouble();
+                        if (amt < 0) throw new NegativeAmountException("Amount cannot be negative!");
+                        expenses.add(new Expense(cat, amt));
+                        System.out.println("Expense added!");
+                    } catch (NegativeAmountException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    if (expenses.isEmpty()) {
+                        System.out.println("No expenses recorded yet.");
+                    } else {
+                        System.out.println("\nYour Expenses:");
+                        for (Expense e : expenses) e.display();
+                    }
+                    break;
+
+                case 3:
+                    if (expenses.isEmpty()) {
+                        System.out.println("Total = $0.00");
+                    } else {
+                        double total = 0;
+                        for (Expense e : expenses) total += e.amount;
+                        System.out.printf("Total = $%.2f%n", total);
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Exiting... Thank you!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 4);
+
+        
+    }
+}
